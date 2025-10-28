@@ -1,43 +1,52 @@
-// 简易 Base64 编解码（支持中文）—— 虽然现在用不到，但保留也无妨
-function encodeObj(obj){
-  const json = JSON.stringify(obj);
-  return btoa(unescape(encodeURIComponent(json)));
+function byId(id) {
+  return document.getElementById(id);
 }
-function decodeObj(b64){
-  const json = decodeURIComponent(escape(atob(b64)));
-  return JSON.parse(json);
-}
-
-function byId(id){return document.getElementById(id);}
 
 const FORM_KEYS = [
-  "name","age","blood","allergy","meds","conditions","address",
-  "c1_name","c1_relation","c1_phone",
-  "c2_name","c2_relation","c2_phone"
+  "name", "age", "blood", "allergy", "meds", "conditions", "address",
+  "c1_name", "c1_relation", "c1_phone",
+  "c2_name", "c2_relation", "c2_phone"
 ];
 
-const STORAGE_KEY = "emergency_card_v1";
+const STORAGE_KEY = "elder_emergency_card_v1";
 
-function readForm(){
+// 读取表单数据
+function readForm() {
   const data = {};
-  FORM_KEYS.forEach(k => data[k] = (byId(k).value || "").trim());
+  FORM_KEYS.forEach(k => {
+    data[k] = (byId(k).value || "").trim();
+  });
   return data;
 }
-function writeForm(data){
-  FORM_KEYS.forEach(k => { if (k in data) byId(k).value = data[k] || ""; });
-}
-function saveLocal(data){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
-}
-function loadLocal(){
-  try{
-    const s = localStorage.getItem(STORAGE_KEY);
-    if (!s) return null;
-    return JSON.parse(s);
-  }catch(e){ return null; }
+
+// 写入表单数据
+function writeForm(data) {
+  FORM_KEYS.forEach(k => {
+    if (k in data) byId(k).value = data[k] || "";
+  });
 }
 
-function fillPreview(data){
+// 保存到 localStorage
+function saveLocal(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn("保存失败", e);
+  }
+}
+
+// 从 localStorage 加载
+function loadLocal() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// 更新预览区
+function fillPreview(data) {
   const set = (id, val) => byId(id).textContent = val || "—";
   set("pv-name", data.name);
   set("pv-age", data.age);
@@ -54,14 +63,14 @@ function fillPreview(data){
   set("pv-c2-phone", data.c2_phone);
 }
 
-// ✅ 新增：生成纯文本信息（放到全局！）
+// 生成纯文本信息（用于离线二维码）
 function makePlainText(data) {
   return `【老人急救信息】
 姓名：${data.name || "—"}
 年龄：${data.age || "—"} 岁
 血型：${data.blood || "—"}
 过敏史：${data.allergy || "—"}
-用药情况：${data.meds || "—"}
+常用药物：${data.meds || "—"}
 基础疾病：${data.conditions || "—"}
 住址：${data.address || "—"}
 
@@ -79,17 +88,17 @@ function makePlainText(data) {
 `.trim();
 }
 
-// ✅ 修正：只保留一个 updateAll，且结构正确
-function updateAll(){
+// 生成二维码
+function updateAll() {
   const data = readForm();
   fillPreview(data);
   
-  // 生成离线二维码
-  const offlineWrap = byId("qr-offline-wrap");
-  offlineWrap.innerHTML = ""; // 清空容器
-  const plainText = makePlainText(data);
-  new QRCode(offlineWrap, {
-    text: plainText,
+  // 生成离线二维码（纯文本）
+  const wrap = byId("qr-offline-wrap");
+  wrap.innerHTML = ""; // 清空
+  const text = makePlainText(data);
+  new QRCode(wrap, {
+    text: text,
     width: 180,
     height: 180,
     correctLevel: QRCode.CorrectLevel.M
@@ -98,26 +107,22 @@ function updateAll(){
   saveLocal(data);
 }
 
-function clearAll(){
+// 清空表单
+function clearAll() {
+  if (!confirm("确定清空所有信息？")) return;
   FORM_KEYS.forEach(k => byId(k).value = "");
   updateAll();
 }
 
-// ✅ 移除 copyShareLink（因为不再需要分享链接）
-// function copyShareLink(){ ... }
-
+// 页面加载完成
 window.addEventListener("DOMContentLoaded", () => {
+  // 加载缓存数据
   const cached = loadLocal();
   if (cached) writeForm(cached);
   updateAll();
 
+  // 绑定事件
   byId("btn-preview").addEventListener("click", updateAll);
   byId("btn-print").addEventListener("click", () => window.print());
-  byId("btn-clear").addEventListener("click", () => {
-    if (confirm("确定要清空当前填写的信息吗？")) clearAll();
-  });
-  
-  // ❌ 移除 btn-copy 的监听（因为 HTML 中可能还有按钮）
-  // 如果你保留了“复制链接”按钮，建议也删除它，或注释掉以下行：
-  // byId("btn-copy")?.addEventListener("click", copyShareLink);
+  byId("btn-clear").addEventListener("click", clearAll);
 });
