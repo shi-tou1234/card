@@ -12,31 +12,44 @@
       --accent: #0b57d0;
       --danger: #c62828;
       --border: #e0e0e0;
+      --k: #333;
+      --v: #000;
+      --card-w: 360px;
     }
+
     * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 0;
-      background: var(--bg); color: var(--fg);
-      font: 16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      line-height: 1.5;
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
+    h1, h2 { line-height: 1.2; margin: 0.5rem 0; }
+
     .container {
-      max-width: 1100px; margin: 0 auto; padding: 1rem;
-      display: grid; gap: 1rem;
+      display: grid;
+      gap: 1rem;
       grid-template-columns: 1fr minmax(340px, auto);
+      padding: 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
     }
     @media (max-width: 900px) {
       .container { grid-template-columns: 1fr; }
     }
+
     .panel {
       padding: 1rem;
       border: 1px solid var(--border);
       border-radius: 0.75rem;
       background: #fff;
     }
-    h1, h2 { margin: 0.5rem 0; }
+
     label {
-      display: flex; flex-direction: column; gap: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
     input, select, textarea, button {
       font: inherit;
@@ -44,14 +57,25 @@
       border: 1px solid var(--border);
       border-radius: 0.5rem;
     }
+    input:focus, select:focus, textarea:focus, button:focus {
+      outline: 3px solid #a7c4ff;
+      outline-offset: 1px;
+    }
+
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
     @media (max-width: 600px) {
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 0.5rem; }
     }
+
     .actions {
-      display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
     }
+    .hint { color: var(--muted); margin: 0.5rem 0 0; }
+
     .btn {
       padding: 0.75rem 1rem;
       border: 1px solid var(--border);
@@ -60,13 +84,20 @@
       cursor: pointer;
     }
     .btn.primary {
-      background: var(--accent); color: white; border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
     }
     .btn.danger {
-      background: white; color: var(--danger); border-color: var(--danger);
+      background: #fff;
+      color: var(--danger);
+      border-color: var(--danger);
     }
+    .btn:active { transform: translateY(1px); }
+
     .card {
-      width: 360px; max-width: 100%;
+      width: var(--card-w);
+      max-width: 100%;
       margin: auto;
       border: 2px solid #000;
       border-radius: 0.75rem;
@@ -74,55 +105,109 @@
       background: #fff;
     }
     .card-title {
-      font-weight: bold; font-size: 1.25rem;
-      text-align: center; margin-bottom: 0.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
     }
     .kv {
-      display: flex; justify-content: space-between;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
       padding: 0.35rem 0;
       border-bottom: 1px dotted var(--border);
     }
     .kv:last-of-type { border-bottom: none; }
-    .divider { height: 1px; background: #000; margin: 0.5rem 0; }
-    .qr-block {
-      margin: 0.75rem 0;
+    .k { color: var(--k); }
+    .v { color: var(--v); font-weight: 600; }
+    .tel { letter-spacing: 0.5px; }
+
+    .divider {
+      height: 1px;
+      background: #000;
+      margin: 0.5rem 0;
     }
+
+    .qr-block { margin: 0.75rem 0; }
     .qr-title {
       text-align: center;
-      font-weight: bold;
+      font-weight: 700;
       margin: 0.25rem 0 0.5rem;
     }
     .qr-wrap {
-      display: flex; justify-content: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       margin: 0.5rem 0;
     }
-    .tiny-hint {
-      color: #666; text-align: center; font-size: 0.85rem;
+    .qr-wrap canvas {
+      min-width: 180px;
+      min-height: 180px;
     }
-    footer {
-      text-align: center; padding: 1rem; color: #666;
+    .tiny-hint {
+      color: #666;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .app-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header h1 { margin: 0.25rem 0; font-size: 1.75rem; }
+    .subtitle { margin: 0; color: var(--muted); }
+
+    .app-footer {
+      padding: 1rem;
+      text-align: center;
+      color: #666;
       border-top: 1px solid var(--border);
       margin-top: 1rem;
     }
+
+    /* 打印样式：只保留卡片 */
     @media print {
       body { background: #fff; }
-      .no-print { display: none !important; }
+      /* 隐藏所有非卡片元素 */
+      .app-header,
+      .app-footer,
+      #form-section,
+      #card-section > h2,
+      .actions,
+      .hint,
+      .tiny-hint:not(.in-card) {
+        display: none !important;
+      }
+      /* 清理卡片容器 */
+      #card-section {
+        padding: 0 !important;
+        border: none !important;
+      }
       .card {
         border: 2px solid #000;
         width: 90mm;
         padding: 6mm;
         border-radius: 3mm;
+        margin: 0 auto !important;
+      }
+      .kv {
+        border-bottom: 1px dotted #999;
       }
     }
   </style>
-  <!-- 二维码库（注意：URL 末尾无空格！） -->
+  <!-- 二维码库（无空格！） -->
   <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <div class="container">
+  <header class="app-header">
+    <h1>老人急救信息卡</h1>
+    <p class="subtitle">填写信息 → 生成离线二维码 → 打印随身携带</p>
+  </header>
+
+  <main class="container">
     <!-- 表单区 -->
-    <section class="panel no-print">
+    <section id="form-section" class="panel">
       <h2>填写老人信息</h2>
       <div class="grid-2">
         <label>姓名<input id="name" type="text" placeholder="张三"></label>
@@ -142,7 +227,7 @@
       <label>基础疾病<textarea id="conditions" rows="2" placeholder="高血压、糖尿病"></textarea></label>
       <label>住址<textarea id="address" rows="2" placeholder="XX市XX区XX路XX号"></textarea></label>
 
-      <fieldset class="contacts no-print">
+      <fieldset>
         <legend>紧急联系人（至少填一位）</legend>
         <div class="grid-3">
           <label>姓名<input id="c1_name" type="text" placeholder="李四"></label>
@@ -156,49 +241,49 @@
         </div>
       </fieldset>
 
-      <div class="actions no-print">
+      <div class="actions">
         <button id="btn-preview" class="btn primary">生成二维码</button>
         <button id="btn-print" class="btn">打印</button>
         <button id="btn-clear" class="btn danger">清空</button>
       </div>
-      <p class="tiny-hint no-print">
-        ✅ 二维码扫码直接显示文字，无需网络！建议打印后随身携带。
+      <p class="hint">
+        ✅ 二维码扫码直接显示文字，无需网络！建议打印后覆膜防水。
       </p>
     </section>
 
     <!-- 预览卡片 -->
-    <section class="panel">
+    <section id="card-section" class="panel">
       <h2>卡片预览</h2>
       <div class="card">
         <div class="card-title">【老人急救信息】</div>
-        <div class="kv"><span>姓名</span><span id="pv-name">—</span></div>
-        <div class="kv"><span>年龄</span><span id="pv-age">—</span></div>
-        <div class="kv"><span>血型</span><span id="pv-blood">—</span></div>
-        <div class="kv"><span>过敏史</span><span id="pv-allergy">—</span></div>
-        <div class="kv"><span>用药</span><span id="pv-meds">—</span></div>
-        <div class="kv"><span>病史</span><span id="pv-conditions">—</span></div>
-        <div class="kv"><span>住址</span><span id="pv-address">—</span></div>
+        <div class="kv"><span class="k">姓名</span><span class="v" id="pv-name">—</span></div>
+        <div class="kv"><span class="k">年龄</span><span class="v" id="pv-age">—</span></div>
+        <div class="kv"><span class="k">血型</span><span class="v" id="pv-blood">—</span></div>
+        <div class="kv"><span class="k">过敏史</span><span class="v" id="pv-allergy">—</span></div>
+        <div class="kv"><span class="k">用药</span><span class="v" id="pv-meds">—</span></div>
+        <div class="kv"><span class="k">病史</span><span class="v" id="pv-conditions">—</span></div>
+        <div class="kv"><span class="k">住址</span><span class="v" id="pv-address">—</span></div>
         <div class="divider"></div>
         <div><strong>紧急联系人1</strong></div>
-        <div class="kv"><span>姓名</span><span id="pv-c1-name">—</span></div>
-        <div class="kv"><span>关系</span><span id="pv-c1-relation">—</span></div>
-        <div class="kv"><span>电话</span><span id="pv-c1-phone">—</span></div>
+        <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c1-name">—</span></div>
+        <div class="kv"><span class="k">关系</span><span class="v" id="pv-c1-relation">—</span></div>
+        <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c1-phone">—</span></div>
         <div><strong>紧急联系人2</strong></div>
-        <div class="kv"><span>姓名</span><span id="pv-c2-name">—</span></div>
-        <div class="kv"><span>关系</span><span id="pv-c2-relation">—</span></div>
-        <div class="kv"><span>电话</span><span id="pv-c2-phone">—</span></div>
+        <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c2-name">—</span></div>
+        <div class="kv"><span class="k">关系</span><span class="v" id="pv-c2-relation">—</span></div>
+        <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c2-phone">—</span></div>
 
         <div class="qr-block">
           <div class="qr-title">📇 离线应急二维码</div>
           <div id="qr-offline-wrap" class="qr-wrap"></div>
-          <div class="tiny-hint">微信扫码直接显示全部信息，无需网络</div>
+          <div class="tiny-hint in-card">微信扫码直接显示全部信息，无需网络</div>
         </div>
       </div>
     </section>
-  </div>
+  </main>
 
-  <footer class="no-print">
-    <small>数据仅保存在本机浏览器 · 打印后建议覆膜防水</small>
+  <footer class="app-footer">
+    <small>数据仅保存在本机 · 打印后建议覆膜防水</small>
   </footer>
 </body>
 </html>
