@@ -89,26 +89,42 @@ function makePlainText(data) {
 function renderQr(text) {
   const wrap = byId("qr-offline-wrap");
   if (!wrap) return;
-
   wrap.innerHTML = "";
 
-  // 若二维码库未加载，给出提示但不抛错
-  if (typeof window.QRCode === "undefined") {
-    wrap.innerHTML = '<div style="color:#c62828;">二维码库未加载，无法生成二维码</div>';
+  // 1) 兼容 qrcode 库（带 toCanvas 的版本）
+  if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
+    const canvas = document.createElement("canvas");
+    wrap.appendChild(canvas);
+    // 该库使用 errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
+    window.QRCode.toCanvas(canvas, text, {
+      errorCorrectionLevel: "M",
+      width: 180,
+      margin: 1
+    }).catch(err => {
+      console.error("生成二维码失败(toCanvas)：", err);
+      wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请查看控制台</div>';
+    });
     return;
   }
 
-  try {
-    new QRCode(wrap, {
-      text,
-      width: 180,
-      height: 180,
-      correctLevel: QRCode.CorrectLevel.M
-    });
-  } catch (err) {
-    console.error("生成二维码失败：", err);
-    wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请检查控制台</div>';
+  // 2) 兼容 qrcodejs 库（new QRCode(...)）
+  if (typeof window.QRCode === "function") {
+    try {
+      const opts = { text, width: 180, height: 180 };
+      // 某些构建没有 CorrectLevel；仅在存在时设置
+      if (window.QRCode.CorrectLevel) {
+        opts.correctLevel = window.QRCode.CorrectLevel.M;
+      }
+      new window.QRCode(wrap, opts);
+    } catch (err) {
+      console.error("生成二维码失败(new QRCode)：", err);
+      wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请查看控制台</div>';
+    }
+    return;
   }
+
+  // 3) 两个都没有，说明库未加载
+  wrap.innerHTML = '<div style="color:#c62828;">二维码库未加载，无法生成二维码</div>';
 }
 
 function updateAll() {
@@ -124,18 +140,16 @@ function clearAll() {
     const el = byId(k);
     if (el) el.value = "";
   });
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {}
+  try { localStorage.removeItem(STORAGE_KEY); } catch {}
   updateAll();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // 先绑定事件，避免首次 update 抛错导致按钮“没反应”
+  // 先绑定事件，避免初始化报错影响按钮可用
   const bind = (id, handler) => {
     const el = byId(id);
     if (el) el.addEventListener("click", (e) => {
-      if (typeof e?.preventDefault === "function") e.preventDefault();
+      e?.preventDefault?.();
       handler();
     });
   };
@@ -143,11 +157,9 @@ window.addEventListener("DOMContentLoaded", () => {
   bind("btn-print", () => window.print());
   bind("btn-clear", clearAll);
 
-  // 加载缓存并渲染一次
   const cached = loadLocal();
   if (cached) writeForm(cached);
 
-  // 使用 try/catch 防御首次渲染异常
   try {
     updateAll();
   } catch (err) {
