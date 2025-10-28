@@ -9,7 +9,12 @@
   --v:#000;
   --card-w: 360px;
 }
-
+.qr-title{
+  text-align:center;
+  font-weight:700;
+  margin:.25rem 0 .5rem;
+}
+.qr-block{ margin:.75rem 0; }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 h1,h2{line-height:1.2}
