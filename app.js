@@ -66,12 +66,6 @@ function makeQRCode(text){
   });
 }
 
-function makeShareLink(data){
-  const b64 = encodeObj({v:1, data});
-  const base = window.location.origin + window.location.pathname;
-  return `${base}#data=${b64}`;
-}
-
 function updateAll(){
  let qrOnline = null;
 let qrOffline = null;
@@ -80,16 +74,19 @@ function updateAll(){
   const data = readForm();
   fillPreview(data);
   
-  // 1. 在线分享链接（原有功能）
-  const link = makeShareLink(data);
-  byId("share-link").value = link;
-  if (qrOnline) qrOnline.clear(); // 清除旧二维码
-  qrOnline = new QRCode(byId("qr-wrap"), {
-    text: link,
+  // ✅ 只生成离线二维码
+  const offlineWrap = byId("qr-offline-wrap");
+  offlineWrap.innerHTML = ""; // 清空容器
+  const plainText = makePlainText(data);
+  new QRCode(offlineWrap, {
+    text: plainText,
     width: 180,
     height: 180,
     correctLevel: QRCode.CorrectLevel.M
   });
+
+  saveLocal(data);
+}
   function makePlainText(data) {
   return `【老人急救信息】
 姓名：${data.name || "—"}
@@ -139,44 +136,20 @@ function clearAll(){
   FORM_KEYS.forEach(k => byId(k).value = "");
   updateAll();
 }
+ window.addEventListener("DOMContentLoaded", () => {
+  // ❌ 不再调用 applyViewModeIfAny()
+  
+  const cached = loadLocal();
+  if (cached) writeForm(cached);
+  updateAll(); // 直接初始化
 
-function applyViewModeIfAny(){
-  const hash = location.hash || "";
-  const prefix = "#data=";
-  if (hash.startsWith(prefix)){
-    try{
-      const b64 = hash.slice(prefix.length);
-      const obj = decodeObj(b64);
-      if (obj && obj.data){
-        writeForm(obj.data);
-        fillPreview(obj.data);
-        const link = makeShareLink(obj.data);
-        byId("share-link").value = link;
-        makeQRCode(link);
-        // 进入查看模式：隐藏表单，仅展示卡片与打印
-        byId("form-section").style.display = "none";
-        byId("view-banner").hidden = false;
-        return true;
-      }
-    }catch(e){
-      console.warn("解析查看数据失败：", e);
-    }
-  }
-  return false;
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const inView = applyViewModeIfAny();
-  if (!inView){
-    const cached = loadLocal();
-    if (cached) writeForm(cached);
-    updateAll();
-  }
-
+  // 保留按钮事件（但去掉“复制链接”相关）
   byId("btn-preview").addEventListener("click", updateAll);
   byId("btn-print").addEventListener("click", () => window.print());
   byId("btn-clear").addEventListener("click", () => {
     if (confirm("确定要清空当前填写的信息吗？")) clearAll();
   });
-  byId("btn-copy").addEventListener("click", copyShareLink);
+  
+  // ❌ 删除“复制链接”按钮的事件（如果你也删了按钮）
+  // byId("btn-copy").removeEventListener(...);
 });
