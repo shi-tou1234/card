@@ -1,4 +1,4 @@
-// 简易 Base64 编解码（支持中文）
+// 简易 Base64 编解码（支持中文）—— 虽然现在用不到，但保留也无妨
 function encodeObj(obj){
   const json = JSON.stringify(obj);
   return btoa(unescape(encodeURIComponent(json)));
@@ -54,40 +54,8 @@ function fillPreview(data){
   set("pv-c2-phone", data.c2_phone);
 }
 
-let qrInstance = null;
-function makeQRCode(text){
-  const wrap = byId("qr-wrap");
-  wrap.innerHTML = "";
-  qrInstance = new QRCode(wrap, {
-    text,
-    width: 180,
-    height: 180,
-    correctLevel: QRCode.CorrectLevel.M
-  });
-}
-
-function updateAll(){
- let qrOnline = null;
-let qrOffline = null;
-
-function updateAll(){
-  const data = readForm();
-  fillPreview(data);
-  
-  // ✅ 只生成离线二维码
-  const offlineWrap = byId("qr-offline-wrap");
-  offlineWrap.innerHTML = ""; // 清空容器
-  const plainText = makePlainText(data);
-  new QRCode(offlineWrap, {
-    text: plainText,
-    width: 180,
-    height: 180,
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
-  saveLocal(data);
-}
-  function makePlainText(data) {
+// ✅ 新增：生成纯文本信息（放到全局！）
+function makePlainText(data) {
   return `【老人急救信息】
 姓名：${data.name || "—"}
 年龄：${data.age || "—"} 岁
@@ -111,10 +79,16 @@ function updateAll(){
 `.trim();
 }
 
-  // 2. 新增：离线纯文本二维码
+// ✅ 修正：只保留一个 updateAll，且结构正确
+function updateAll(){
+  const data = readForm();
+  fillPreview(data);
+  
+  // 生成离线二维码
+  const offlineWrap = byId("qr-offline-wrap");
+  offlineWrap.innerHTML = ""; // 清空容器
   const plainText = makePlainText(data);
-  if (qrOffline) qrOffline.clear();
-  qrOffline = new QRCode(byId("qr-offline-wrap"), {
+  new QRCode(offlineWrap, {
     text: plainText,
     width: 180,
     height: 180,
@@ -123,33 +97,27 @@ function updateAll(){
 
   saveLocal(data);
 }
-}
-
-function copyShareLink(){
-  const input = byId("share-link");
-  input.select();
-  input.setSelectionRange(0, 99999);
-  navigator.clipboard?.writeText(input.value).catch(() => document.execCommand("copy"));
-}
 
 function clearAll(){
   FORM_KEYS.forEach(k => byId(k).value = "");
   updateAll();
 }
- window.addEventListener("DOMContentLoaded", () => {
-  // ❌ 不再调用 applyViewModeIfAny()
-  
+
+// ✅ 移除 copyShareLink（因为不再需要分享链接）
+// function copyShareLink(){ ... }
+
+window.addEventListener("DOMContentLoaded", () => {
   const cached = loadLocal();
   if (cached) writeForm(cached);
-  updateAll(); // 直接初始化
+  updateAll();
 
-  // 保留按钮事件（但去掉“复制链接”相关）
   byId("btn-preview").addEventListener("click", updateAll);
   byId("btn-print").addEventListener("click", () => window.print());
   byId("btn-clear").addEventListener("click", () => {
     if (confirm("确定要清空当前填写的信息吗？")) clearAll();
   });
   
-  // ❌ 删除“复制链接”按钮的事件（如果你也删了按钮）
-  // byId("btn-copy").removeEventListener(...);
+  // ❌ 移除 btn-copy 的监听（因为 HTML 中可能还有按钮）
+  // 如果你保留了“复制链接”按钮，建议也删除它，或注释掉以下行：
+  // byId("btn-copy")?.addEventListener("click", copyShareLink);
 });
