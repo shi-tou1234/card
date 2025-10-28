@@ -65,187 +65,186 @@ function fillPreview(data) {
   set("pv-c2-phone", data.c2_phone);
 }
 
-/* ---------- 文本生成（3档“冗长度”） ---------- */
-// 计算 UTF-8 字节长度（用于容量判断/提示）
-function byteLengthUTF8(str) {
-  let len = 0;
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i);
-    if (c < 0x80) len += 1;
-    else if (c < 0x800) len += 2;
-    else if (c >= 0xD800 && c <= 0xDBFF) { len += 4; i++; } // 代理对
-    else len += 3;
-  }
-  return len;
-}
-
-// 详细模式（接近你原本内容，但去掉装饰符与全角冒号，减少若干常见超长点）
-function makeTextVerbose(d) {
+/* ---------- 三种文本模式：都包含全部字段和值 ---------- */
+// 1) 详细-去装饰版（移除全角装饰和冗余空白，保持中文标签，尽量节省字节）
+function makeTextVerboseSlim(d) {
   return [
     "老人急救信息",
     `姓名:${d.name || "—"}`,
-    `年龄:${d.age || "—"}岁`,
+    `年龄:${d.age || "—"}`,
     `血型:${d.blood || "—"}`,
-    `过敏史:${d.allergy || "—"}`,
-    `常用药物:${d.meds || "—"}`,
-    `基础疾病:${d.conditions || "—"}`,
+    `过敏:${d.allergy || "—"}`,
+    `用药:${d.meds || "—"}`,
+    `病史:${d.conditions || "—"}`,
     `住址:${d.address || "—"}`,
-    "",
-    "紧急联系人1:",
-    `  姓名:${d.c1_name || "—"}`,
-    `  关系:${d.c1_relation || "—"}`,
-    `  电话:${d.c1_phone || "—"}`,
-    "",
-    "紧急联系人2:",
-    `  姓名:${d.c2_name || "—"}`,
-    `  关系:${d.c2_relation || "—"}`,
-    `  电话:${d.c2_phone || "—"}`,
+    `紧急1:${[d.c1_name || "—", d.c1_relation || "—", d.c1_phone || "—"].join("/")}`,
+    `紧急2:${[d.c2_name || "—", d.c2_relation || "—", d.c2_phone || "—"].join("/")}`,
   ].join("\n").trim();
 }
 
-// 简洁模式（减少标签字数与空白）
-function makeTextCompact(d) {
+// 2) 中文紧凑标签版（字段词更短，行更少）
+function makeTextCompactCN(d) {
   const L = (k, v) => `${k}:${v || "—"}`;
   return [
     "老人急救信息",
-    `${L("姓名", d.name)} ${L("年龄", d.age)} ${L("血型", d.blood)}`,
+    `${L("姓", d.name)} ${L("龄", d.age)} ${L("血", d.blood)}`,
     `${L("过敏", d.allergy)}`,
     `${L("用药", d.meds)}`,
     `${L("病史", d.conditions)}`,
     `${L("住址", d.address)}`,
     `${L("紧急1", [d.c1_name, d.c1_relation, d.c1_phone].filter(Boolean).join("/")) || "紧急1:—"}`,
     `${L("紧急2", [d.c2_name, d.c2_relation, d.c2_phone].filter(Boolean).join("/")) || "紧急2:—"}`,
-  ].join("\n");
+  ].join("\n").trim();
 }
 
-// 极简模式（字段键缩写，分号/逗号分隔，最省字节；扫码仍可读）
-function makeTextUltra(d) {
-  // n 姓名, a 年龄, b 血型, al 过敏, m 用药, c 病史, ad 地址, c1/c2: 姓,关,电
-  const kv = (k, v) => (v ? `${k}=${v}` : "");
+// 3) 极简键值版（英文字母键，最省字节；仍保留全部值）
+function makeTextUltraKV(d) {
+  const kv = (k, v) => `${k}=${v || "-"}`;
   const line1 = [
     kv("n", d.name), kv("a", d.age), kv("b", d.blood),
     kv("al", d.allergy), kv("m", d.meds), kv("c", d.conditions), kv("ad", d.address)
-  ].filter(Boolean).join(";");
-  const c1 = [d.c1_name, d.c1_relation, d.c1_phone].filter(Boolean).join(",");
-  const c2 = [d.c2_name, d.c2_relation, d.c2_phone].filter(Boolean).join(",");
-  const parts = [line1, c1 ? `c1=${c1}` : "", c2 ? `c2=${c2}` : ""].filter(Boolean);
-  return parts.join(";");
+  ].join(";");
+  const c1 = [d.c1_name || "-", d.c1_relation || "-", d.c1_phone || "-"].join(",");
+  const c2 = [d.c2_name || "-", d.c2_relation || "-", d.c2_phone || "-"].join(",");
+  return `${line1};c1=${c1};c2=${c2}`;
 }
 
-function makeText(mode, data) {
-  switch (mode) {
-    case "verbose": return makeTextVerbose(data);
-    case "compact": return makeTextCompact(data);
-    case "ultra":   return makeTextUltra(data);
-    default:        return makeTextVerbose(data);
+// 计算 UTF-8 字节长度（仅用于日志/提示）
+function byteLengthUTF8(str) {
+  let len = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    if (c < 0x80) len += 1;
+    else if (c < 0x800) len += 2;
+    else if (c >= 0xD800 && c <= 0xDBFF) { len += 4; i++; }
+    else len += 3;
   }
+  return len;
 }
 
-/* ---------- 二维码渲染（自动回退） ---------- */
-function renderQrWithLibToCanvas(wrap, text, ecl) {
-  const canvas = document.createElement("canvas");
-  wrap.appendChild(canvas);
-  return window.QRCode.toCanvas(canvas, text, {
-    errorCorrectionLevel: ecl, // 'L' | 'M'
-    width: 180,
-    margin: 1
-  });
-}
-
-function renderQrWithLibCtor(wrap, text, ecl) {
-  const opts = { text, width: 180, height: 180 };
-  if (window.QRCode.CorrectLevel && ecl) {
-    opts.correctLevel = (ecl === "L" ? window.QRCode.CorrectLevel.L : window.QRCode.CorrectLevel.M);
-  }
-  // qrcodejs 构造器是同步的，溢出会直接 throw
-  new window.QRCode(wrap, opts);
-}
-
-function renderQrAuto(data) {
-  const wrap = byId("qr-offline-wrap");
-  if (!wrap) return;
-
-  wrap.innerHTML = "";
-
-  // 按“文本模式 × 纠错等级”尝试：verbose/compact/ultra × M/L
-  const tries = [
-    { mode: "verbose", ecl: "M" },
-    { mode: "verbose", ecl: "L" },
-    { mode: "compact", ecl: "M" },
-    { mode: "compact", ecl: "L" },
-    { mode: "ultra",  ecl: "M" },
-    { mode: "ultra",  ecl: "L" },
-  ];
-
+/* ---------- 单码渲染（强制单个二维码，必要时自动切换更紧凑模式） ---------- */
+function libInfo() {
   const lib = window.QRCode;
-  if (!lib) {
-    wrap.innerHTML = '<div style="color:#c62828;">二维码库未加载，无法生成</div>';
-    console.error("未检测到 QRCode 库。请检查 <script src> 是否可访问。");
-    return;
+  return {
+    lib,
+    hasLib: !!lib,
+    isToCanvas: !!(lib && typeof lib.toCanvas === "function"),
+    hasCorrectLevel: !!(lib && lib.CorrectLevel)
+  };
+}
+
+function renderOneQRCode(wrap, text, ecl /* 'M' | 'L' */) {
+  const { lib, isToCanvas, hasCorrectLevel } = libInfo();
+  if (!lib) throw new Error("二维码库未加载");
+
+  if (isToCanvas) {
+    const canvas = document.createElement("canvas");
+    wrap.appendChild(canvas);
+    return lib.toCanvas(canvas, text, {
+      errorCorrectionLevel: ecl,
+      width: 180,
+      margin: 1
+    });
+  } else {
+    // qrcodejs：同步构造器，溢出会 throw
+    const opts = { text, width: 180, height: 180 };
+    if (hasCorrectLevel) {
+      opts.correctLevel = (ecl === "L" ? lib.CorrectLevel.L : lib.CorrectLevel.M);
+    }
+    new lib(wrap, opts);
+    return Promise.resolve();
   }
+}
 
-  // 预先计算各模式长度，便于最后提示
-  const lens = Object.fromEntries(
-    ["verbose","compact","ultra"].map(m => [m, byteLengthUTF8(makeText(m, data))])
-  );
+// 通过试渲染判断“是否能在指定纠错等级下放进单码”，不污染真实容器
+async function canFitSingle(text, ecl) {
+  const temp = document.createElement("div");
+  try {
+    await renderOneQRCode(temp, text, ecl);
+    return true;
+  } catch (err) {
+    const s = String(err && (err.message || err)).toLowerCase();
+    if (s.includes("overflow") || s.includes("length")) return false;
+    throw err; // 非容量错误直接抛出
+  } finally {
+    temp.innerHTML = "";
+  }
+}
 
-  const isToCanvas = typeof lib.toCanvas === "function";
+async function renderSingleQR(wrap, data) {
+  wrap.innerHTML = "";
+  const modes = [
+    { name: "详细", builder: makeTextVerboseSlim },
+    { name: "紧凑", builder: makeTextCompactCN },
+    { name: "极简", builder: makeTextUltraKV },
+  ];
+  // 优先 M，尽量保证容错；不行再用 L
+  const ecls = ["M", "L"];
+
+  // 预先统计各模式字节数（用于调试/提示）
+  const lens = {};
+  modes.forEach(m => lens[m.name] = byteLengthUTF8(m.builder(data)));
+
   let lastErr = null;
 
-  // 逐一尝试直到成功
-  const tryNext = async (i = 0) => {
-    if (i >= tries.length) {
-      wrap.innerHTML =
-        `<div style="color:#c62828;">
-          生成二维码失败（可能内容过长）。各模式字节数：
-          详细≈${lens.verbose}，简洁≈${lens.compact}，极简≈${lens.ultra}。
-          请优先精简“住址/病史/用药”等长文本，或使用两张卡片分开打印。
-        </div>`;
-      if (lastErr) console.error("最终失败原因：", lastErr);
-      return;
+  for (const ecl of ecls) {
+    for (const m of modes) {
+      const text = m.builder(data);
+      try {
+        const ok = await canFitSingle(text, ecl);
+        if (!ok) continue;
+
+        // 真正渲染
+        await renderOneQRCode(wrap, text, ecl);
+
+        // 如非“详细 + M”，加个小提示说明已使用更紧凑/更低容错
+        if (!(m.name === "详细" && ecl === "M")) {
+          const hint = document.createElement("div");
+          hint.className = "tiny-hint in-card";
+          hint.textContent = `已使用${m.name}模式，纠错等级 ${ecl}（单码包含全部字段与数值）`;
+          wrap.appendChild(hint);
+        }
+        return;
+      } catch (err) {
+        lastErr = err;
+        const s = String(err && (err.message || err)).toLowerCase();
+        // 容量溢出：尝试下一个模式/等级；其它错误直接报
+        if (!(s.includes("overflow") || s.includes("length"))) {
+          console.error("生成二维码失败（非容量问题）：", err);
+          wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请查看控制台</div>';
+          return;
+        }
+      }
     }
+  }
 
-    const { mode, ecl } = tries[i];
-    const text = makeText(mode, data);
-
-    // 每次尝试都先清空容器（qrcodejs 会向 wrap 里塞入 img/canvas）
-    wrap.innerHTML = "";
-
-    try {
-      if (isToCanvas) {
-        await renderQrWithLibToCanvas(wrap, text, ecl);
-      } else {
-        renderQrWithLibCtor(wrap, text, ecl);
-      }
-
-      // 成功后追加提示（若使用了降级模式或 L 级纠错）
-      if (mode !== "verbose" || ecl === "L") {
-        const note = document.createElement("div");
-        note.className = "tiny-hint in-card";
-        note.textContent = `已使用${mode === "compact" ? "简洁" : (mode === "ultra" ? "极简" : "详细")}模式，纠错等级 ${ecl}`;
-        wrap.appendChild(note);
-      }
-      return; // 成功结束
-    } catch (err) {
-      lastErr = err;
-      // code length overflow 往下尝试
-      if (String(err && (err.message || err)).toLowerCase().includes("overflow")) {
-        return tryNext(i + 1);
-      }
-      // 其它错误直接提示并停止
-      console.error(`生成二维码失败（mode=${mode}, ecl=${ecl}）：`, err);
-      wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请查看控制台</div>';
-    }
-  };
-
-  tryNext(0);
+  // 所有模式在 L 下仍放不下：提示用户精简大字段
+  console.error("所有单码尝试均溢出。各模式字节数：", lens);
+  wrap.innerHTML =
+    `<div style="color:#c62828;">
+      无法在单个二维码内容纳全部文本（即使用极简模式与 L 级纠错）。
+      请适度缩短“住址/病史/用药”等长文本后再试。
+    </div>`;
 }
 
 /* ---------- 页面联动 ---------- */
 function updateAll() {
   const data = readForm();
   fillPreview(data);
-  renderQrAuto(data);
+  const wrap = byId("qr-offline-wrap");
+  if (!wrap) return;
+
+  if (!window.QRCode) {
+    wrap.innerHTML = '<div style="color:#c62828;">二维码库未加载，无法生成</div>';
+    return;
+  }
+
+  renderSingleQR(wrap, data)
+    .catch(err => {
+      console.error("生成二维码失败：", err);
+      wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请查看控制台</div>';
+    });
+
   saveLocal(data);
 }
 
@@ -260,7 +259,7 @@ function clearAll() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // 先绑定事件，避免初始化报错影响按钮可用
+  // 先绑定事件，避免初始化异常影响按钮
   const bind = (id, handler) => {
     const el = byId(id);
     if (el) el.addEventListener("click", e => {
@@ -275,11 +274,5 @@ window.addEventListener("DOMContentLoaded", () => {
   const cached = loadLocal();
   if (cached) writeForm(cached);
 
-  try {
-    updateAll();
-  } catch (err) {
-    console.error("初始化失败：", err);
-    const wrap = byId("qr-offline-wrap");
-    if (wrap) wrap.innerHTML = '<div style="color:#c62828;">初始化失败，请检查控制台</div>';
-  }
+  updateAll();
 });
