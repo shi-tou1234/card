@@ -73,12 +73,36 @@ function makeShareLink(data){
 }
 
 function updateAll(){
+ let qrOnline = null;
+let qrOffline = null;
+
+function updateAll(){
   const data = readForm();
   fillPreview(data);
+  
+  // 1. 在线分享链接（原有功能）
   const link = makeShareLink(data);
   byId("share-link").value = link;
-  makeQRCode(link);
+  if (qrOnline) qrOnline.clear(); // 清除旧二维码
+  qrOnline = new QRCode(byId("qr-wrap"), {
+    text: link,
+    width: 180,
+    height: 180,
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  // 2. 新增：离线纯文本二维码
+  const plainText = makePlainText(data);
+  if (qrOffline) qrOffline.clear();
+  qrOffline = new QRCode(byId("qr-offline-wrap"), {
+    text: plainText,
+    width: 180,
+    height: 180,
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
   saveLocal(data);
+}
 }
 
 function copyShareLink(){
