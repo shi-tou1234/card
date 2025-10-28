@@ -12,15 +12,17 @@ const STORAGE_KEY = "elder_emergency_card_v1";
 
 function readForm() {
   const data = {};
-  FORM_KEYS.forEach(k => {
-    data[k] = (byId(k).value || "").trim();
-  });
+  for (const k of FORM_KEYS) {
+    const el = byId(k);
+    data[k] = el ? (el.value || "").trim() : "";
+  }
   return data;
 }
 
 function writeForm(data) {
   FORM_KEYS.forEach(k => {
-    if (k in data) byId(k).value = data[k] || "";
+    const el = byId(k);
+    if (el) el.value = (k in data ? data[k] : "") || "";
   });
 }
 
@@ -42,7 +44,10 @@ function loadLocal() {
 }
 
 function fillPreview(data) {
-  const set = (id, val) => byId(id).textContent = val || "—";
+  const set = (id, val) => {
+    const el = byId(id);
+    if (el) el.textContent = val || "—";
+  };
   set("pv-name", data.name);
   set("pv-age", data.age);
   set("pv-blood", data.blood);
@@ -78,39 +83,76 @@ function makePlainText(data) {
   关系：${data.c2_relation || "—"}
   电话：${data.c2_phone || "—"}
 
-（本信息由家属填写，请救助者协助联系）
-`.trim();
+（本信息由家属填写，请救助者协助联系）`.trim();
+}
+
+function renderQr(text) {
+  const wrap = byId("qr-offline-wrap");
+  if (!wrap) return;
+
+  wrap.innerHTML = "";
+
+  // 若二维码库未加载，给出提示但不抛错
+  if (typeof window.QRCode === "undefined") {
+    wrap.innerHTML = '<div style="color:#c62828;">二维码库未加载，无法生成二维码</div>';
+    return;
+  }
+
+  try {
+    new QRCode(wrap, {
+      text,
+      width: 180,
+      height: 180,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch (err) {
+    console.error("生成二维码失败：", err);
+    wrap.innerHTML = '<div style="color:#c62828;">生成二维码失败，请检查控制台</div>';
+  }
 }
 
 function updateAll() {
   const data = readForm();
   fillPreview(data);
-  
-  const wrap = byId("qr-offline-wrap");
-  wrap.innerHTML = "";
-  const text = makePlainText(data);
-  new QRCode(wrap, {
-    text: text,
-    width: 180,
-    height: 180,
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
+  renderQr(makePlainText(data));
   saveLocal(data);
 }
 
 function clearAll() {
   if (!confirm("确定清空所有信息？")) return;
-  FORM_KEYS.forEach(k => byId(k).value = "");
+  FORM_KEYS.forEach(k => {
+    const el = byId(k);
+    if (el) el.value = "";
+  });
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {}
   updateAll();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  // 先绑定事件，避免首次 update 抛错导致按钮“没反应”
+  const bind = (id, handler) => {
+    const el = byId(id);
+    if (el) el.addEventListener("click", (e) => {
+      if (typeof e?.preventDefault === "function") e.preventDefault();
+      handler();
+    });
+  };
+  bind("btn-preview", updateAll);
+  bind("btn-print", () => window.print());
+  bind("btn-clear", clearAll);
+
+  // 加载缓存并渲染一次
   const cached = loadLocal();
   if (cached) writeForm(cached);
-  updateAll();
 
-  byId("btn-preview").addEventListener("click", updateAll);
-  byId("btn-print").addEventListener("click", () => window.print());
-  byId("btn-clear").addEventListener("click", clearAll);
+  // 使用 try/catch 防御首次渲染异常
+  try {
+    updateAll();
+  } catch (err) {
+    console.error("初始化失败：", err);
+    const wrap = byId("qr-offline-wrap");
+    if (wrap) wrap.innerHTML = '<div style="color:#c62828;">初始化失败，请检查控制台</div>';
+  }
 });
