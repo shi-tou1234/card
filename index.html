@@ -139,6 +139,7 @@
       justify-content: center;
       align-items: center;
       margin: 0.5rem 0;
+      min-height: 180px;
     }
     .qr-wrap canvas {
       min-width: 180px;
@@ -165,10 +166,8 @@
       margin-top: 1rem;
     }
 
-    /* 打印样式：只保留卡片 */
     @media print {
       body { background: #fff; }
-      /* 隐藏所有非卡片元素 */
       .app-header,
       .app-footer,
       #form-section,
@@ -178,7 +177,6 @@
       .tiny-hint:not(.in-card) {
         display: none !important;
       }
-      /* 清理卡片容器 */
       #card-section {
         padding: 0 !important;
         border: none !important;
@@ -195,8 +193,13 @@
       }
     }
   </style>
-  <!-- 二维码库（无空格！） -->
+
+  <!-- 建议：任选一个可靠的 CDN，确保能加载成功 -->
+  <!-- 方案 A：cdnjs -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- 方案 B（你的原方案也可留用）：jsdelivr
   <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  -->
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -206,7 +209,6 @@
   </header>
 
   <main class="container">
-    <!-- 表单区 -->
     <section id="form-section" class="panel">
       <h2>填写老人信息</h2>
       <div class="grid-2">
@@ -242,16 +244,15 @@
       </fieldset>
 
       <div class="actions">
-        <button id="btn-preview" class="btn primary">生成二维码</button>
-        <button id="btn-print" class="btn">打印</button>
-        <button id="btn-clear" class="btn danger">清空</button>
+        <button id="btn-preview" class="btn primary" type="button">生成二维码</button>
+        <button id="btn-print" class="btn" type="button">打印</button>
+        <button id="btn-clear" class="btn danger" type="button">清空</button>
       </div>
       <p class="hint">
         ✅ 二维码扫码直接显示文字，无需网络！建议打印后覆膜防水。
       </p>
     </section>
 
-    <!-- 预览卡片 -->
     <section id="card-section" class="panel">
       <h2>卡片预览</h2>
       <div class="card">
