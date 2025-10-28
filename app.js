@@ -10,7 +10,6 @@ const FORM_KEYS = [
 
 const STORAGE_KEY = "elder_emergency_card_v1";
 
-// 读取表单数据
 function readForm() {
   const data = {};
   FORM_KEYS.forEach(k => {
@@ -19,14 +18,12 @@ function readForm() {
   return data;
 }
 
-// 写入表单数据
 function writeForm(data) {
   FORM_KEYS.forEach(k => {
     if (k in data) byId(k).value = data[k] || "";
   });
 }
 
-// 保存到 localStorage
 function saveLocal(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -35,7 +32,6 @@ function saveLocal(data) {
   }
 }
 
-// 从 localStorage 加载
 function loadLocal() {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
@@ -45,7 +41,6 @@ function loadLocal() {
   }
 }
 
-// 更新预览区
 function fillPreview(data) {
   const set = (id, val) => byId(id).textContent = val || "—";
   set("pv-name", data.name);
@@ -63,7 +58,6 @@ function fillPreview(data) {
   set("pv-c2-phone", data.c2_phone);
 }
 
-// 生成纯文本信息（用于离线二维码）
 function makePlainText(data) {
   return `【老人急救信息】
 姓名：${data.name || "—"}
@@ -88,14 +82,12 @@ function makePlainText(data) {
 `.trim();
 }
 
-// 生成二维码
 function updateAll() {
   const data = readForm();
   fillPreview(data);
   
-  // 生成离线二维码（纯文本）
   const wrap = byId("qr-offline-wrap");
-  wrap.innerHTML = ""; // 清空
+  wrap.innerHTML = "";
   const text = makePlainText(data);
   new QRCode(wrap, {
     text: text,
@@ -107,21 +99,17 @@ function updateAll() {
   saveLocal(data);
 }
 
-// 清空表单
 function clearAll() {
   if (!confirm("确定清空所有信息？")) return;
   FORM_KEYS.forEach(k => byId(k).value = "");
   updateAll();
 }
 
-// 页面加载完成
 window.addEventListener("DOMContentLoaded", () => {
-  // 加载缓存数据
   const cached = loadLocal();
   if (cached) writeForm(cached);
   updateAll();
 
-  // 绑定事件
   byId("btn-preview").addEventListener("click", updateAll);
   byId("btn-print").addEventListener("click", () => window.print());
   byId("btn-clear").addEventListener("click", clearAll);
