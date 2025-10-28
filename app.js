@@ -104,3 +104,32 @@ function applyViewModeIfAny(){
         writeForm(obj.data);
         fillPreview(obj.data);
         const link = makeShareLink(obj.data);
+        byId("share-link").value = link;
+        makeQRCode(link);
+        // 进入查看模式：隐藏表单，仅展示卡片与打印
+        byId("form-section").style.display = "none";
+        byId("view-banner").hidden = false;
+        return true;
+      }
+    }catch(e){
+      console.warn("解析查看数据失败：", e);
+    }
+  }
+  return false;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const inView = applyViewModeIfAny();
+  if (!inView){
+    const cached = loadLocal();
+    if (cached) writeForm(cached);
+    updateAll();
+  }
+
+  byId("btn-preview").addEventListener("click", updateAll);
+  byId("btn-print").addEventListener("click", () => window.print());
+  byId("btn-clear").addEventListener("click", () => {
+    if (confirm("确定要清空当前填写的信息吗？")) clearAll();
+  });
+  byId("btn-copy").addEventListener("click", copyShareLink);
+});
