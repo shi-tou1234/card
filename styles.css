@@ -1,94 +1,262 @@
-:root{
-  --bg:#ffffff;
-  --fg:#111111;
-  --muted:#555;
-  --accent:#0b57d0;
-  --danger:#c62828;
-  --border:#e0e0e0;
-  --k:#333;
-  --v:#000;
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #555;
+  --accent: #0b57d0;
+  --danger: #c62828;
+  --border: #e0e0e0;
+  --k: #333;
+  --v: #000;
   --card-w: 360px;
 }
-.qr-title{
-  text-align:center;
-  font-weight:700;
-  margin:.25rem 0 .5rem;
-}
-.qr-block{ margin:.75rem 0; }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-h1,h2{line-height:1.2}
-input,select,textarea,button{font:inherit}
-label{display:flex;flex-direction:column;gap:.25rem}
-input,select,textarea{
-  padding:.625rem .75rem;border:1px solid var(--border);border-radius:.5rem;
-}
-input:focus,select:focus,textarea:focus,button:focus{outline:3px solid #a7c4ff; outline-offset:1px}
-.btn{padding:.75rem 1rem;border:1px solid var(--border);border-radius:.5rem;background:#f8f9fb}
-.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn.danger{background:#fff;color:var(--danger);border-color:var(--danger)}
-.btn:active{transform:translateY(1px)}
 
-.app-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
-.app-header h1{margin:.25rem 0;font-size:1.75rem}
-.subtitle{margin:0;color:var(--muted)}
+* {
+  box-sizing: border-box;
+}
 
-.container{
-  display:grid;gap:1rem;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+h1, h2 {
+  line-height: 1.2;
+  margin: 0.5rem 0;
+}
+
+.container {
+  display: grid;
+  gap: 1rem;
   grid-template-columns: 1fr minmax(340px, auto);
-  padding:1rem;max-width:1100px;margin:0 auto;
-}
-.panel{padding:1rem;border:1px solid var(--border);border-radius:.75rem;background:#fff}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
-.actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.5rem}
-.hint{color:var(--muted);margin:.5rem 0 0}
-
-.card{
-  width:var(--card-w);max-width:100%;
-  margin:auto;border:2px solid #000;border-radius:.75rem;padding:1rem;background:#fff;
-}
-.card-title{font-weight:700;font-size:1.25rem;margin-bottom:.5rem;text-align:center}
-.kv{display:flex;justify-content:space-between;gap:1rem;padding:.35rem 0;border-bottom:1px dotted var(--border)}
-.kv:last-of-type{border-bottom:none}
-.k{color:var(--k)}
-.v{color:var(--v);font-weight:600}
-.tel{letter-spacing:.5px}
-.divider{height:1px;background:#000;margin:.5rem 0}
-.contact-block{margin:.35rem 0}
-.contact-title{font-weight:700;margin:.25rem 0}
-
-.qr-wrap{display:flex;justify-content:center;align-items:center;margin:.5rem 0}
-.tiny-hint{color:#666;text-align:center;font-size:.85rem}
-
-.share{display:flex;align-items:center;gap:.5rem;margin-top:1rem}
-.share label{flex:1}
-.share input{width:100%}
-
-.view-banner{
-  position:sticky;bottom:0;left:0;right:0;
-  background:#fff8e1;border-top:1px solid #f0d28a;padding:.5rem 1rem;text-align:center
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.app-footer{padding:1rem;text-align:center;color:#666}
-
-/* 响应式 */
-@media (max-width: 900px){
-  .container{grid-template-columns:1fr}
-  .grid-3{grid-template-columns:1fr;gap:.5rem}
-  .grid-2{grid-template-columns:1fr;gap:.5rem}
-}
-
-/* 打印样式：仅打印卡片本体，充满纸面宽度的一部分，便于裁切 */
-@media print{
-  body{background:#fff}
-  header,footer,#form-section,.share,.tiny-hint,.app-header,.view-banner,h2{display:none!important}
-  #card-section{border:none;padding:0}
-  .card{
-    border:2px solid #000;
-    width: 90mm; /* 常见卡套尺寸附近，可调整 */
-    padding:6mm;border-radius:3mm;
-    zoom:1;
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
   }
-  .kv{border-bottom:1px dotted #999}
+}
+
+.panel {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+input, select, textarea, button {
+  font: inherit;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: 3px solid #a7c4ff;
+  outline-offset: 1px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.hint {
+  color: var(--muted);
+  margin: 0.5rem 0 0;
+}
+
+.btn {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: #f8f9fb;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn.danger {
+  background: #fff;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.card {
+  width: var(--card-w);
+  max-width: 100%;
+  margin: auto;
+  border: 2px solid #000;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px dotted var(--border);
+}
+
+.kv:last-of-type {
+  border-bottom: none;
+}
+
+.k {
+  color: var(--k);
+}
+
+.v {
+  color: var(--v);
+  font-weight: 600;
+}
+
+.tel {
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  height: 1px;
+  background: #000;
+  margin: 0.5rem 0;
+}
+
+.qr-block {
+  margin: 0.75rem 0;
+}
+
+.qr-title {
+  text-align: center;
+  font-weight: 700;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.qr-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.qr-wrap canvas {
+  min-width: 180px;
+  min-height: 180px;
+}
+
+.tiny-hint {
+  color: #666;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.app-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+  margin: 0.25rem 0;
+  font-size: 1.75rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.app-footer {
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* 打印样式：仅保留卡片内容 */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  /* 隐藏所有非卡片元素 */
+  .app-header,
+  .app-footer,
+  #form-section,
+  #card-section > h2,
+  .actions,
+  .hint,
+  .tiny-hint:not(.in-card) {
+    display: none !important;
+  }
+
+  /* 清理卡片容器 */
+  #card-section {
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .card {
+    border: 2px solid #000;
+    width: 90mm;      /* 标准卡片宽度 */
+    padding: 6mm;     /* 内边距 */
+    border-radius: 3mm;
+    margin: 0 auto !important;
+  }
+
+  .kv {
+    border-bottom: 1px dotted #999;
+  }
 }
