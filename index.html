@@ -194,21 +194,20 @@
     }
   </style>
 
-  <!-- 建议：任选一个可靠的 CDN，确保能加载成功 -->
-  <!-- 方案 A：cdnjs -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- 方案 B（你的原方案也可留用）：jsdelivr
+  <!-- 二维码库（任选其一，你当前用的是 qrcodejs） -->
   <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  -->
+  <!-- 用于在线二维码把数据压缩进 URL hash -->
+  <script defer src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <header class="app-header">
     <h1>老人急救信息卡</h1>
-    <p class="subtitle">填写信息 → 生成离线二维码 → 打印随身携带</p>
+    <p class="subtitle">填写信息 → 同时生成【在线二维码 + 离线二维码】 → 打印随身携带</p>
   </header>
 
   <main class="container">
+    <!-- 表单区 -->
     <section id="form-section" class="panel">
       <h2>填写老人信息</h2>
       <div class="grid-2">
@@ -249,10 +248,11 @@
         <button id="btn-clear" class="btn danger" type="button">清空</button>
       </div>
       <p class="hint">
-        ✅ 二维码扫码直接显示文字，无需网络！建议打印后覆膜防水。
+        在线二维码需联网打开查看页；离线二维码无需网络。数据仅保存在本机与二维码中。
       </p>
     </section>
 
+    <!-- 预览卡片 -->
     <section id="card-section" class="panel">
       <h2>卡片预览</h2>
       <div class="card">
@@ -274,10 +274,18 @@
         <div class="kv"><span class="k">关系</span><span class="v" id="pv-c2-relation">—</span></div>
         <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c2-phone">—</span></div>
 
+        <!-- 在线二维码（包含全部信息，需联网） -->
         <div class="qr-block">
-          <div class="qr-title">📇 离线应急二维码</div>
+          <div class="qr-title">📶 在线二维码（包含全部信息）</div>
+          <div id="qr-online-wrap" class="qr-wrap"></div>
+          <div class="tiny-hint in-card">扫码需联网，数据仅在链接 hash 中解析</div>
+        </div>
+
+        <!-- 离线二维码（仅联系人+病史+用药） -->
+        <div class="qr-block">
+          <div class="qr-title">📇 离线应急二维码（联系人+病史+用药）</div>
           <div id="qr-offline-wrap" class="qr-wrap"></div>
-          <div class="tiny-hint in-card">微信扫码直接显示全部信息，无需网络</div>
+          <div class="tiny-hint in-card">扫码直接显示简要信息，无需网络</div>
         </div>
       </div>
     </section>
