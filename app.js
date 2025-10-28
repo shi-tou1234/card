@@ -90,6 +90,29 @@ function updateAll(){
     height: 180,
     correctLevel: QRCode.CorrectLevel.M
   });
+  function makePlainText(data) {
+  return `【老人急救信息】
+姓名：${data.name || "—"}
+年龄：${data.age || "—"} 岁
+血型：${data.blood || "—"}
+过敏史：${data.allergy || "—"}
+用药情况：${data.meds || "—"}
+基础疾病：${data.conditions || "—"}
+住址：${data.address || "—"}
+
+紧急联系人1：
+  姓名：${data.c1_name || "—"}
+  关系：${data.c1_relation || "—"}
+  电话：${data.c1_phone || "—"}
+
+紧急联系人2：
+  姓名：${data.c2_name || "—"}
+  关系：${data.c2_relation || "—"}
+  电话：${data.c2_phone || "—"}
+
+（本信息由家属填写，请救助者协助联系）
+`.trim();
+}
 
   // 2. 新增：离线纯文本二维码
   const plainText = makePlainText(data);
