@@ -2,162 +2,203 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes" />
-  <title>紧急联系卡 - 可打印 + 二维码</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- 二维码库（CDN），如需完全离线可将脚本下载为本地文件引用 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>老人急救信息卡（离线版）</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #555;
+      --accent: #0b57d0;
+      --danger: #c62828;
+      --border: #e0e0e0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--fg);
+      font: 16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1100px; margin: 0 auto; padding: 1rem;
+      display: grid; gap: 1rem;
+      grid-template-columns: 1fr minmax(340px, auto);
+    }
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .panel {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background: #fff;
+    }
+    h1, h2 { margin: 0.5rem 0; }
+    label {
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    input, select, textarea, button {
+      font: inherit;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+    @media (max-width: 600px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    .actions {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem;
+    }
+    .btn {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: #f8f9fb;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
+    .btn.danger {
+      background: white; color: var(--danger); border-color: var(--danger);
+    }
+    .card {
+      width: 360px; max-width: 100%;
+      margin: auto;
+      border: 2px solid #000;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      background: #fff;
+    }
+    .card-title {
+      font-weight: bold; font-size: 1.25rem;
+      text-align: center; margin-bottom: 0.5rem;
+    }
+    .kv {
+      display: flex; justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px dotted var(--border);
+    }
+    .kv:last-of-type { border-bottom: none; }
+    .divider { height: 1px; background: #000; margin: 0.5rem 0; }
+    .qr-block {
+      margin: 0.75rem 0;
+    }
+    .qr-title {
+      text-align: center;
+      font-weight: bold;
+      margin: 0.25rem 0 0.5rem;
+    }
+    .qr-wrap {
+      display: flex; justify-content: center;
+      margin: 0.5rem 0;
+    }
+    .tiny-hint {
+      color: #666; text-align: center; font-size: 0.85rem;
+    }
+    footer {
+      text-align: center; padding: 1rem; color: #666;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .card {
+        border: 2px solid #000;
+        width: 90mm;
+        padding: 6mm;
+        border-radius: 3mm;
+      }
+    }
+  </style>
+  <!-- 二维码库（注意：URL 末尾无空格！） -->
   <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <header class="app-header">
-    <h1>紧急联系卡</h1>
-    <p class="subtitle">填写信息 → 生成卡片 → 二维码/打印</p>
-  </header>
-
-  <main class="container">
+  <div class="container">
     <!-- 表单区 -->
-    <section id="form-section" class="panel">
-      <h2>信息填写</h2>
-      <form id="card-form" novalidate>
-        <div class="grid-2">
-          <label>
-            姓名
-            <input id="name" name="name" type="text" required placeholder="例如：张三" />
-          </label>
-          <label>
-            年龄
-            <input id="age" name="age" type="number" min="0" max="130" placeholder="例如：72" />
-          </label>
-        </div>
-
-        <div class="grid-2">
-          <label>
-            血型
-            <select id="blood" name="blood">
-              <option value="">不填写</option>
-              <option>A</option>
-              <option>B</option>
-              <option>AB</option>
-              <option>O</option>
-              <option>不详</option>
-            </select>
-          </label>
-          <label>
-            过敏史
-            <input id="allergy" name="allergy" type="text" placeholder="如：青霉素、花生" />
-          </label>
-        </div>
-
+    <section class="panel no-print">
+      <h2>填写老人信息</h2>
+      <div class="grid-2">
+        <label>姓名<input id="name" type="text" placeholder="张三"></label>
+        <label>年龄<input id="age" type="number" min="0" max="130" placeholder="72"></label>
+      </div>
+      <div class="grid-2">
         <label>
-          常用药物
-          <textarea id="meds" name="meds" rows="2" placeholder="如：二甲双胍 0.5g 早晚各一次"></textarea>
+          血型
+          <select id="blood">
+            <option value="">不详</option>
+            <option>A</option><option>B</option><option>AB</option><option>O</option>
+          </select>
         </label>
+        <label>过敏史<input id="allergy" type="text" placeholder="青霉素、花生"></label>
+      </div>
+      <label>常用药物<textarea id="meds" rows="2" placeholder="二甲双胍 0.5g 早晚"></textarea></label>
+      <label>基础疾病<textarea id="conditions" rows="2" placeholder="高血压、糖尿病"></textarea></label>
+      <label>住址<textarea id="address" rows="2" placeholder="XX市XX区XX路XX号"></textarea></label>
 
-        <label>
-          既往/基础疾病
-          <textarea id="conditions" name="conditions" rows="2" placeholder="如：高血压、冠心病、糖尿病"></textarea>
-        </label>
-
-        <label>
-          居住地址
-          <textarea id="address" name="address" rows="2" placeholder="用于紧急联系定位"></textarea>
-        </label>
-
-        <fieldset class="contacts">
-          <legend>紧急联系人（建议至少一位）</legend>
-          <div class="grid-3">
-            <label>
-              姓名
-              <input id="c1_name" name="c1_name" type="text" placeholder="李四" />
-            </label>
-            <label>
-              关系
-              <input id="c1_relation" name="c1_relation" type="text" placeholder="女儿/儿子/邻居" />
-            </label>
-            <label>
-              电话
-              <input id="c1_phone" name="c1_phone" type="tel" inputmode="tel" placeholder="138****0001" />
-            </label>
-          </div>
-          <div class="grid-3">
-            <label>
-              姓名
-              <input id="c2_name" name="c2_name" type="text" placeholder="王五" />
-            </label>
-            <label>
-              关系
-              <input id="c2_relation" name="c2_relation" type="text" placeholder="家属/朋友/社工" />
-            </label>
-            <label>
-              电话
-              <input id="c2_phone" name="c2_phone" type="tel" inputmode="tel" placeholder="139****0002" />
-            </label>
-          </div>
-        </fieldset>
-
-        <div class="actions">
-          <button type="button" id="btn-preview" class="btn primary">更新预览并生成二维码</button>
-          <button type="button" id="btn-print" class="btn">打印</button>
-          <button type="button" id="btn-clear" class="btn danger">清空</button>
+      <fieldset class="contacts no-print">
+        <legend>紧急联系人（至少填一位）</legend>
+        <div class="grid-3">
+          <label>姓名<input id="c1_name" type="text" placeholder="李四"></label>
+          <label>关系<input id="c1_relation" type="text" placeholder="女儿"></label>
+          <label>电话<input id="c1_phone" type="tel" placeholder="138****0001"></label>
         </div>
-        <p class="hint">
-          提示：数据只保存在你的浏览器或二维码中，不会上传服务器。打印前请确认信息无误。
-        </p>
-      </form>
+        <div class="grid-3">
+          <label>姓名<input id="c2_name" type="text" placeholder="王五"></label>
+          <label>关系<input id="c2_relation" type="text" placeholder="邻居"></label>
+          <label>电话<input id="c2_phone" type="tel" placeholder="139****0002"></label>
+        </div>
+      </fieldset>
+
+      <div class="actions no-print">
+        <button id="btn-preview" class="btn primary">生成二维码</button>
+        <button id="btn-print" class="btn">打印</button>
+        <button id="btn-clear" class="btn danger">清空</button>
+      </div>
+      <p class="tiny-hint no-print">
+        ✅ 二维码扫码直接显示文字，无需网络！建议打印后随身携带。
+      </p>
     </section>
 
-    <!-- 预览卡片区 -->
-    <section id="card-section" class="panel">
+    <!-- 预览卡片 -->
+    <section class="panel">
       <h2>卡片预览</h2>
-      <div id="card" class="card" aria-live="polite">
-        <div class="card-title">紧急联系卡</div>
-        <div class="kv"><span class="k">姓名</span><span class="v" id="pv-name">—</span></div>
-        <div class="kv"><span class="k">年龄</span><span class="v" id="pv-age">—</span></div>
-        <div class="kv"><span class="k">血型</span><span class="v" id="pv-blood">—</span></div>
-        <div class="kv"><span class="k">过敏史</span><span class="v" id="pv-allergy">—</span></div>
-        <div class="kv"><span class="k">常用药物</span><span class="v" id="pv-meds">—</span></div>
-        <div class="kv"><span class="k">既往/基础病</span><span class="v" id="pv-conditions">—</span></div>
-        <div class="kv"><span class="k">住址</span><span class="v" id="pv-address">—</span></div>
-
+      <div class="card">
+        <div class="card-title">【老人急救信息】</div>
+        <div class="kv"><span>姓名</span><span id="pv-name">—</span></div>
+        <div class="kv"><span>年龄</span><span id="pv-age">—</span></div>
+        <div class="kv"><span>血型</span><span id="pv-blood">—</span></div>
+        <div class="kv"><span>过敏史</span><span id="pv-allergy">—</span></div>
+        <div class="kv"><span>用药</span><span id="pv-meds">—</span></div>
+        <div class="kv"><span>病史</span><span id="pv-conditions">—</span></div>
+        <div class="kv"><span>住址</span><span id="pv-address">—</span></div>
         <div class="divider"></div>
-        <div class="contact-block">
-          <div class="contact-title">紧急联系人 1</div>
-          <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c1-name">—</span></div>
-          <div class="kv"><span class="k">关系</span><span class="v" id="pv-c1-relation">—</span></div>
-          <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c1-phone">—</span></div>
-        </div>
+        <div><strong>紧急联系人1</strong></div>
+        <div class="kv"><span>姓名</span><span id="pv-c1-name">—</span></div>
+        <div class="kv"><span>关系</span><span id="pv-c1-relation">—</span></div>
+        <div class="kv"><span>电话</span><span id="pv-c1-phone">—</span></div>
+        <div><strong>紧急联系人2</strong></div>
+        <div class="kv"><span>姓名</span><span id="pv-c2-name">—</span></div>
+        <div class="kv"><span>关系</span><span id="pv-c2-relation">—</span></div>
+        <div class="kv"><span>电话</span><span id="pv-c2-phone">—</span></div>
 
-        <div class="contact-block">
-          <div class="contact-title">紧急联系人 2</div>
-          <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c2-name">—</span></div>
-          <div class="kv"><span class="k">关系</span><span class="v" id="pv-c2-relation">—</span></div>
-          <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c2-phone">—</span></div>
+        <div class="qr-block">
+          <div class="qr-title">📇 离线应急二维码</div>
+          <div id="qr-offline-wrap" class="qr-wrap"></div>
+          <div class="tiny-hint">微信扫码直接显示全部信息，无需网络</div>
         </div>
-<div class="qr-block">
-  <h3 class="qr-title">📇 离线应急二维码（推荐打印，无需网络）</h3>
-  <div id="qr-offline-wrap" class="qr-wrap" aria-label="离线应急二维码（扫码直接显示文字，无需网络）"></div>
-  <div class="tiny-hint">扫码直接显示关键信息，无需网络；适合随身打印备用</div>
-</div>
-      </div>
-
-      <div class="share">
-        <label>
-          分享链接（可复制给家属/社工）
-          <input id="share-link" type="text" readonly />
-        </label>
-        <button id="btn-copy" type="button" class="btn">复制链接</button>
       </div>
     </section>
-  </main>
-
-  <!-- 查看模式提示（当URL带有#data=时，自动进入只读卡片模式） -->
-  <div id="view-banner" class="view-banner" hidden>
-    当前为“查看模式”。如需编辑，请清除地址栏 #data= 后刷新。
   </div>
 
-  <footer class="app-footer">
-    <small>开源许可 MIT · 本页面不上传任何数据</small>
+  <footer class="no-print">
+    <small>数据仅保存在本机浏览器 · 打印后建议覆膜防水</small>
   </footer>
 </body>
 </html>
