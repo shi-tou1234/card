@@ -1,0 +1,140 @@
+<!--pages/preview/preview.wxml-->
+<view class="container">
+  <!-- 应急卡片 -->
+  <view class="emergency-card" id="card">
+    <view class="card-header">
+      <view class="header-icon">🆘</view>
+      <view class="header-text">
+        <view class="header-title">紧急联系卡</view>
+        <view class="header-subtitle">EMERGENCY CARD</view>
+      </view>
+    </view>
+
+    <view class="card-body">
+      <!-- 个人信息 -->
+      <view class="info-section">
+        <view class="info-row main-info">
+          <view class="info-item name">
+            <text class="label">姓名</text>
+            <text class="value large">{{cardData.name || '—'}}</text>
+          </view>
+          <view class="info-item">
+            <text class="label">年龄</text>
+            <text class="value">{{cardData.age || '—'}}岁</text>
+          </view>
+          <view class="info-item">
+            <text class="label">血型</text>
+            <text class="value blood">{{cardData.blood || '—'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 健康信息 -->
+      <view class="info-section" wx:if="{{cardData.allergy || cardData.conditions || cardData.meds}}">
+        <view class="section-title">
+          <text class="section-icon">💊</text>
+          <text>健康信息</text>
+        </view>
+        <view class="info-grid">
+          <view class="info-block" wx:if="{{cardData.allergy}}">
+            <text class="block-label">过敏史</text>
+            <text class="block-value warning">{{cardData.allergy}}</text>
+          </view>
+          <view class="info-block" wx:if="{{cardData.conditions}}">
+            <text class="block-label">病症</text>
+            <text class="block-value">{{cardData.conditions}}</text>
+          </view>
+          <view class="info-block" wx:if="{{cardData.meds}}">
+            <text class="block-label">常用药</text>
+            <text class="block-value">{{cardData.meds}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 家庭住址 -->
+      <view class="info-section" wx:if="{{cardData.address}}">
+        <view class="section-title">
+          <text class="section-icon">🏠</text>
+          <text>家庭住址</text>
+        </view>
+        <view class="address-text">{{cardData.address}}</view>
+      </view>
+
+      <!-- 紧急联系人 -->
+      <view class="info-section contacts">
+        <view class="section-title">
+          <text class="section-icon">📞</text>
+          <text>紧急联系人</text>
+        </view>
+        
+        <view class="contact-card" wx:if="{{cardData.c1_name}}">
+          <view class="contact-info">
+            <text class="contact-name">{{cardData.c1_name}}</text>
+            <text class="contact-relation" wx:if="{{cardData.c1_relation}}">（{{cardData.c1_relation}}）</text>
+          </view>
+          <view class="contact-phone" bindtap="callPhone" data-phone="{{cardData.c1_phone}}">
+            <text class="phone-icon">📱</text>
+            <text class="phone-number">{{cardData.c1_phone}}</text>
+          </view>
+        </view>
+
+        <view class="contact-card" wx:if="{{cardData.c2_name}}">
+          <view class="contact-info">
+            <text class="contact-name">{{cardData.c2_name}}</text>
+            <text class="contact-relation" wx:if="{{cardData.c2_relation}}">（{{cardData.c2_relation}}）</text>
+          </view>
+          <view class="contact-phone" bindtap="callPhone" data-phone="{{cardData.c2_phone}}">
+            <text class="phone-icon">📱</text>
+            <text class="phone-number">{{cardData.c2_phone}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 二维码区域 -->
+  <view class="qrcode-section">
+    <view class="qrcode-title">扫描二维码查看应急信息</view>
+    <view class="qrcode-wrapper">
+      <canvas 
+        type="2d" 
+        id="qrcode-canvas" 
+        class="qrcode-canvas"
+        style="width: 500rpx; height: 500rpx;"
+      ></canvas>
+      <image 
+        wx:if="{{qrcodeImage}}" 
+        src="{{qrcodeImage}}" 
+        class="qrcode-image"
+        mode="aspectFit"
+        show-menu-by-longpress="{{true}}"
+      ></image>
+    </view>
+    <view class="qrcode-tip">长按二维码可保存到相册</view>
+    <view class="qrcode-tip highlight" wx:if="{{qrCodeTip}}">{{qrCodeTip}}</view>
+    <view class="qrcode-instructions">
+      <view class="instruction-title">📖 使用说明</view>
+      <view class="instruction-item">1. 在小程序内使用「扫一扫」功能可直接查看信息</view>
+      <view class="instruction-item">2. 保存到相册后可打印贴在常用物品上</view>
+      <view class="instruction-item">3. 建议家人也安装此小程序以便扫码查看</view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-primary" bindtap="saveQRCode">
+      <text class="btn-icon">💾</text>
+      <text>保存二维码到相册</text>
+    </button>
+    <button class="btn-secondary" bindtap="editCard">
+      <text class="btn-icon">✏️</text>
+      <text>编辑信息</text>
+    </button>
+    <button class="btn-outline" bindtap="shareCard" open-type="share">
+      <text class="btn-icon">📤</text>
+      <text>分享给家人</text>
+    </button>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

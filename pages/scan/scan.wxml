@@ -1,0 +1,142 @@
+<!--pages/scan/scan.wxml-->
+<view class="container">
+  <!-- 紧急提示 -->
+  <view class="emergency-banner">
+    <view class="banner-icon">🆘</view>
+    <view class="banner-text">
+      <view class="banner-title">紧急求助信息</view>
+      <view class="banner-subtitle">请根据以下信息提供帮助</view>
+    </view>
+  </view>
+
+  <!-- 应急卡片 -->
+  <view class="emergency-card">
+    <!-- 个人信息 -->
+    <view class="info-section main-section">
+      <view class="person-info">
+        <view class="name-row">
+          <text class="person-name">{{cardData.name || '未知'}}</text>
+          <view class="blood-tag" wx:if="{{cardData.blood}}">
+            <text>{{cardData.blood}}</text>
+          </view>
+        </view>
+        <view class="age-row" wx:if="{{cardData.age}}">
+          <text class="age-text">{{cardData.age}}岁</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 重要提醒 - 过敏 -->
+    <view class="info-section warning-section" wx:if="{{cardData.allergy}}">
+      <view class="section-header warning">
+        <text class="section-icon">⚠️</text>
+        <text class="section-title">过敏史（重要）</text>
+      </view>
+      <view class="warning-content">
+        <text>{{cardData.allergy}}</text>
+      </view>
+    </view>
+
+    <!-- 健康信息 -->
+    <view class="info-section" wx:if="{{cardData.conditions || cardData.meds}}">
+      <view class="section-header">
+        <text class="section-icon">💊</text>
+        <text class="section-title">健康信息</text>
+      </view>
+      <view class="info-content">
+        <view class="info-item" wx:if="{{cardData.conditions}}">
+          <text class="item-label">病症/基础疾病</text>
+          <text class="item-value">{{cardData.conditions}}</text>
+        </view>
+        <view class="info-item" wx:if="{{cardData.meds}}">
+          <text class="item-label">常用药物</text>
+          <text class="item-value">{{cardData.meds}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家庭住址 -->
+    <view class="info-section" wx:if="{{cardData.address}}">
+      <view class="section-header">
+        <text class="section-icon">🏠</text>
+        <text class="section-title">家庭住址</text>
+      </view>
+      <view class="info-content">
+        <text class="address-text">{{cardData.address}}</text>
+      </view>
+    </view>
+
+    <!-- 紧急联系人 -->
+    <view class="info-section contacts-section">
+      <view class="section-header">
+        <text class="section-icon">📞</text>
+        <text class="section-title">紧急联系人</text>
+      </view>
+      
+      <view class="contact-list">
+        <view class="contact-item" wx:if="{{cardData.c1_name}}" bindtap="callPhone" data-phone="{{cardData.c1_phone}}">
+          <view class="contact-left">
+            <view class="contact-avatar">
+              <text>{{cardData.c1_name[0] || '联'}}</text>
+            </view>
+            <view class="contact-info">
+              <text class="contact-name">{{cardData.c1_name}}</text>
+              <text class="contact-relation" wx:if="{{cardData.c1_relation}}">{{cardData.c1_relation}}</text>
+            </view>
+          </view>
+          <view class="contact-action">
+            <view class="call-btn">
+              <text class="call-icon">📱</text>
+              <text class="call-text">拨打</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="contact-item" wx:if="{{cardData.c2_name}}" bindtap="callPhone" data-phone="{{cardData.c2_phone}}">
+          <view class="contact-left">
+            <view class="contact-avatar secondary">
+              <text>{{cardData.c2_name[0] || '联'}}</text>
+            </view>
+            <view class="contact-info">
+              <text class="contact-name">{{cardData.c2_name}}</text>
+              <text class="contact-relation" wx:if="{{cardData.c2_relation}}">{{cardData.c2_relation}}</text>
+            </view>
+          </view>
+          <view class="contact-action">
+            <view class="call-btn secondary">
+              <text class="call-icon">📱</text>
+              <text class="call-text">拨打</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 紧急电话提示 -->
+  <view class="emergency-tips">
+    <view class="tip-title">🚨 紧急情况请拨打</view>
+    <view class="emergency-numbers">
+      <view class="emergency-number" bindtap="callEmergency" data-phone="120">
+        <text class="number">120</text>
+        <text class="desc">急救电话</text>
+      </view>
+      <view class="emergency-number" bindtap="callEmergency" data-phone="110">
+        <text class="number">110</text>
+        <text class="desc">报警电话</text>
+      </view>
+      <view class="emergency-number" bindtap="callEmergency" data-phone="119">
+        <text class="number">119</text>
+        <text class="desc">消防电话</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="footer-tip">
+    <text class="tip-icon">💝</text>
+    <text class="tip-text">感谢您的善意帮助</text>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

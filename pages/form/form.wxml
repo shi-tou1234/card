@@ -1,0 +1,231 @@
+<!--pages/form/form.wxml-->
+<view class="container">
+  <form bindsubmit="submitForm">
+    <!-- 基本信息 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">👤</text>
+        <text>基本信息</text>
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label required">姓名</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入姓名"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.name}}"
+          bindinput="onInput"
+          data-field="name"
+        />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group half">
+          <text class="form-label">年龄</text>
+          <input 
+            class="form-input" 
+            type="number"
+            placeholder="如：72"
+            placeholder-style="color:#999;"
+            style="color:#333;"
+            value="{{formData.age}}"
+            bindinput="onInput"
+            data-field="age"
+          />
+        </view>
+        <view class="form-group half">
+          <text class="form-label">血型</text>
+          <picker 
+            mode="selector" 
+            range="{{bloodTypes}}" 
+            value="{{bloodTypeIndex}}"
+            bindchange="onBloodTypeChange"
+          >
+            <view class="form-picker">
+              <text>{{formData.blood || '请选择'}}</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 健康信息 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">💊</text>
+        <text>健康信息</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">过敏史</text>
+        <input 
+          class="form-input" 
+          placeholder="如：青霉素、花生（无则留空）"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.allergy}}"
+          bindinput="onInput"
+          data-field="allergy"
+        />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">病症/基础疾病</text>
+        <textarea 
+          class="form-textarea" 
+          placeholder="如：高血压、糖尿病、心脏病等"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.conditions}}"
+          bindinput="onInput"
+          data-field="conditions"
+        />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">常用药物</text>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请填写日常服用的药物名称"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.meds}}"
+          bindinput="onInput"
+          data-field="meds"
+        />
+      </view>
+    </view>
+
+    <!-- 家庭地址 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">🏠</text>
+        <text>家庭住址</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">详细地址</text>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请填写完整家庭地址"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.address}}"
+          bindinput="onInput"
+          data-field="address"
+        />
+      </view>
+    </view>
+
+    <!-- 紧急联系人1 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">📞</text>
+        <text>紧急联系人 1</text>
+        <text class="required-badge">必填</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label required">联系人姓名</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入联系人姓名"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.c1_name}}"
+          bindinput="onInput"
+          data-field="c1_name"
+        />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group half">
+          <text class="form-label">与本人关系</text>
+          <input 
+            class="form-input" 
+            placeholder="如：儿子"
+            placeholder-style="color:#999;"
+            style="color:#333;"
+            value="{{formData.c1_relation}}"
+            bindinput="onInput"
+            data-field="c1_relation"
+          />
+        </view>
+        <view class="form-group half">
+          <text class="form-label required">联系电话</text>
+          <input 
+            class="form-input" 
+            type="number"
+            placeholder="手机号码"
+            placeholder-style="color:#999;"
+            style="color:#333;"
+            value="{{formData.c1_phone}}"
+            bindinput="onInput"
+            data-field="c1_phone"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 紧急联系人2 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">📞</text>
+        <text>紧急联系人 2（备用）</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">联系人姓名</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入联系人姓名（选填）"
+          placeholder-style="color:#999;"
+          style="color:#333;"
+          value="{{formData.c2_name}}"
+          bindinput="onInput"
+          data-field="c2_name"
+        />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group half">
+          <text class="form-label">与本人关系</text>
+          <input 
+            class="form-input" 
+            placeholder="如：女儿"
+            placeholder-style="color:#999;"
+            style="color:#333;"
+            value="{{formData.c2_relation}}"
+            bindinput="onInput"
+            data-field="c2_relation"
+          />
+        </view>
+        <view class="form-group half">
+          <text class="form-label">联系电话</text>
+          <input 
+            class="form-input" 
+            type="number"
+            placeholder="手机号码"
+            placeholder-style="color:#999;"
+            style="color:#333;"
+            value="{{formData.c2_phone}}"
+            bindinput="onInput"
+            data-field="c2_phone"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="button-group">
+      <button class="btn-primary" form-type="submit">生成应急卡</button>
+      <button class="btn-secondary" bindtap="clearForm">清空表单</button>
+    </view>
+  </form>
+
+  <!-- 底部安全区域 -->
+  <view class="safe-bottom"></view>
+</view>

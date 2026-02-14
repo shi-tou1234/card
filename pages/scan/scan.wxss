@@ -1,0 +1,331 @@
+/* pages/scan/scan.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding-bottom: 40rpx;
+}
+
+/* 紧急横幅 */
+.emergency-banner {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  padding: 40rpx 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.banner-icon {
+  font-size: 60rpx;
+  margin-right: 24rpx;
+}
+
+.banner-text {
+  color: #fff;
+}
+
+.banner-title {
+  font-size: 38rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.banner-subtitle {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 应急卡片 */
+.emergency-card {
+  margin: 24rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 主要信息区 */
+.main-section {
+  padding: 36rpx 30rpx;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.person-info {
+  color: #fff;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.person-name {
+  font-size: 52rpx;
+  font-weight: bold;
+  margin-right: 20rpx;
+}
+
+.blood-tag {
+  background-color: #e74c3c;
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.age-text {
+  font-size: 30rpx;
+  opacity: 0.85;
+}
+
+/* 信息区块 */
+.info-section {
+  padding: 28rpx 30rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.info-section:last-child {
+  border-bottom: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-header.warning {
+  background-color: #fff3e0;
+  margin: -28rpx -30rpx 20rpx;
+  padding: 20rpx 30rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 警告区块 */
+.warning-section {
+  background-color: #fff8e1;
+}
+
+.warning-content {
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  border-left: 6rpx solid #ff9800;
+}
+
+.warning-content text {
+  font-size: 32rpx;
+  color: #e65100;
+  font-weight: 600;
+}
+
+/* 信息内容 */
+.info-content {
+  
+}
+
+.info-item {
+  margin-bottom: 20rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.item-label {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.item-value {
+  display: block;
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.address-text {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 联系人列表 */
+.contacts-section {
+  padding-bottom: 20rpx;
+}
+
+.contact-list {
+  
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  background-color: #f8f9fa;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-item:active {
+  background-color: #f0f0f0;
+}
+
+.contact-left {
+  display: flex;
+  align-items: center;
+}
+
+.contact-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.contact-avatar.secondary {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.contact-avatar text {
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: bold;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.contact-relation {
+  font-size: 24rpx;
+  color: #888;
+  margin-top: 4rpx;
+}
+
+.contact-action {
+  
+}
+
+.call-btn {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16rpx 28rpx;
+  border-radius: 30rpx;
+}
+
+.call-btn.secondary {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.call-icon {
+  margin-right: 8rpx;
+  font-size: 28rpx;
+}
+
+.call-text {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 紧急电话提示 */
+.emergency-tips {
+  margin: 24rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.tip-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+
+.emergency-numbers {
+  display: flex;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.emergency-number {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 10rpx;
+  background-color: #fef0ef;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+}
+
+.emergency-number:active {
+  background-color: #fde0de;
+  transform: scale(0.98);
+}
+
+.emergency-number .number {
+  display: block;
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 8rpx;
+}
+
+.emergency-number .desc {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 底部提示 */
+.footer-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx;
+}
+
+.tip-icon {
+  margin-right: 10rpx;
+  font-size: 32rpx;
+}
+
+.tip-text {
+  font-size: 28rpx;
+  color: #888;
+}
+
+.safe-bottom {
+  height: 40rpx;
+}

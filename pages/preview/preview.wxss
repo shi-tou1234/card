@@ -1,0 +1,344 @@
+/* pages/preview/preview.wxss */
+.container {
+  padding: 24rpx;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 应急卡片 */
+.emergency-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 30rpx;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  padding: 36rpx 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.header-icon {
+  font-size: 56rpx;
+  margin-right: 20rpx;
+}
+
+.header-text {
+  color: #fff;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  letter-spacing: 4rpx;
+}
+
+.header-subtitle {
+  font-size: 22rpx;
+  opacity: 0.85;
+  margin-top: 4rpx;
+  letter-spacing: 2rpx;
+}
+
+.card-body {
+  padding: 30rpx;
+}
+
+/* 信息区块 */
+.info-section {
+  margin-bottom: 28rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 2rpx dashed #eee;
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.section-icon {
+  margin-right: 10rpx;
+  font-size: 32rpx;
+}
+
+/* 主要信息行 */
+.main-info {
+  display: flex;
+  align-items: flex-end;
+  gap: 30rpx;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item.name {
+  flex: 1;
+  min-width: 200rpx;
+}
+
+.info-item .label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 6rpx;
+}
+
+.info-item .value {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.info-item .value.large {
+  font-size: 48rpx;
+  color: #e74c3c;
+}
+
+.info-item .value.blood {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 8rpx 20rpx;
+  border-radius: 10rpx;
+  font-size: 30rpx;
+}
+
+/* 信息网格 */
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.info-block {
+  background-color: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.block-label {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.block-value {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.block-value.warning {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* 地址 */
+.address-text {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+/* 联系人 */
+.contacts {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.contact-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contact-card:last-child {
+  margin-bottom: 0;
+}
+
+.contact-info {
+  color: #fff;
+}
+
+.contact-name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.contact-relation {
+  font-size: 26rpx;
+  opacity: 0.85;
+}
+
+.contact-phone {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 16rpx 24rpx;
+  border-radius: 30rpx;
+}
+
+.phone-icon {
+  margin-right: 10rpx;
+  font-size: 28rpx;
+}
+
+.phone-number {
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+
+/* 二维码区域 */
+.qrcode-section {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.qrcode-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 30rpx;
+}
+
+.qrcode-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+
+.qrcode-canvas {
+  width: 500rpx;
+  height: 500rpx;
+}
+
+.qrcode-image {
+  width: 500rpx;
+  height: 500rpx;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.qrcode-tip {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.qrcode-tip.highlight {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.qrcode-instructions {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-top: 24rpx;
+  text-align: left;
+}
+
+.instruction-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.instruction-item {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.8;
+  padding-left: 8rpx;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  padding: 0 10rpx;
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16rpx;
+  padding: 28rpx 0;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(231, 76, 60, 0.3);
+}
+
+.btn-secondary {
+  width: 100%;
+  background-color: #fff;
+  color: #333;
+  border: 2rpx solid #ddd;
+  border-radius: 16rpx;
+  padding: 26rpx 0;
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-outline {
+  width: 100%;
+  background-color: transparent;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+  border-radius: 16rpx;
+  padding: 26rpx 0;
+  font-size: 32rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon {
+  margin-right: 12rpx;
+  font-size: 32rpx;
+}
+
+.safe-bottom {
+  height: 60rpx;
+}
