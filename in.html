@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes" />
+  <title>紧急联系卡 - 可打印 + 二维码</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- 二维码库（CDN），如需完全离线可将脚本下载为本地文件引用 -->
+  <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>紧急联系卡</h1>
+    <p class="subtitle">填写信息 → 生成卡片 → 二维码/打印</p>
+  </header>
+
+  <main class="container">
+    <!-- 表单区 -->
+    <section id="form-section" class="panel">
+      <h2>信息填写</h2>
+      <form id="card-form" novalidate>
+        <div class="grid-2">
+          <label>
+            姓名
+            <input id="name" name="name" type="text" required placeholder="例如：张三" />
+          </label>
+          <label>
+            年龄
+            <input id="age" name="age" type="number" min="0" max="130" placeholder="例如：72" />
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label>
+            血型
+            <select id="blood" name="blood">
+              <option value="">不填写</option>
+              <option>A</option>
+              <option>B</option>
+              <option>AB</option>
+              <option>O</option>
+              <option>不详</option>
+            </select>
+          </label>
+          <label>
+            过敏史
+            <input id="allergy" name="allergy" type="text" placeholder="如：青霉素、花生" />
+          </label>
+        </div>
+
+        <label>
+          常用药物
+          <textarea id="meds" name="meds" rows="2" placeholder="如：二甲双胍 0.5g 早晚各一次"></textarea>
+        </label>
+
+        <label>
+          既往/基础疾病
+          <textarea id="conditions" name="conditions" rows="2" placeholder="如：高血压、冠心病、糖尿病"></textarea>
+        </label>
+
+        <label>
+          居住地址
+          <textarea id="address" name="address" rows="2" placeholder="用于紧急联系定位"></textarea>
+        </label>
+
+        <fieldset class="contacts">
+          <legend>紧急联系人（建议至少一位）</legend>
+          <div class="grid-3">
+            <label>
+              姓名
+              <input id="c1_name" name="c1_name" type="text" placeholder="李四" />
+            </label>
+            <label>
+              关系
+              <input id="c1_relation" name="c1_relation" type="text" placeholder="女儿/儿子/邻居" />
+            </label>
+            <label>
+              电话
+              <input id="c1_phone" name="c1_phone" type="tel" inputmode="tel" placeholder="138****0001" />
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>
+              姓名
+              <input id="c2_name" name="c2_name" type="text" placeholder="王五" />
+            </label>
+            <label>
+              关系
+              <input id="c2_relation" name="c2_relation" type="text" placeholder="家属/朋友/社工" />
+            </label>
+            <label>
+              电话
+              <input id="c2_phone" name="c2_phone" type="tel" inputmode="tel" placeholder="139****0002" />
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="button" id="btn-preview" class="btn primary">更新预览并生成二维码</button>
+          <button type="button" id="btn-print" class="btn">打印</button>
+          <button type="button" id="btn-clear" class="btn danger">清空</button>
+        </div>
+        <p class="hint">
+          提示：数据只保存在你的浏览器或二维码中，不会上传服务器。打印前请确认信息无误。
+        </p>
+      </form>
+    </section>
+
+    <!-- 预览卡片区 -->
+    <section id="card-section" class="panel">
+      <h2>卡片预览</h2>
+      <div id="card" class="card" aria-live="polite">
+        <div class="card-title">紧急联系卡</div>
+        <div class="kv"><span class="k">姓名</span><span class="v" id="pv-name">—</span></div>
+        <div class="kv"><span class="k">年龄</span><span class="v" id="pv-age">—</span></div>
+        <div class="kv"><span class="k">血型</span><span class="v" id="pv-blood">—</span></div>
+        <div class="kv"><span class="k">过敏史</span><span class="v" id="pv-allergy">—</span></div>
+        <div class="kv"><span class="k">常用药物</span><span class="v" id="pv-meds">—</span></div>
+        <div class="kv"><span class="k">既往/基础病</span><span class="v" id="pv-conditions">—</span></div>
+        <div class="kv"><span class="k">住址</span><span class="v" id="pv-address">—</span></div>
+
+        <div class="divider"></div>
+        <div class="contact-block">
+          <div class="contact-title">紧急联系人 1</div>
+          <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c1-name">—</span></div>
+          <div class="kv"><span class="k">关系</span><span class="v" id="pv-c1-relation">—</span></div>
+          <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c1-phone">—</span></div>
+        </div>
+
+        <div class="contact-block">
+          <div class="contact-title">紧急联系人 2</div>
+          <div class="kv"><span class="k">姓名</span><span class="v" id="pv-c2-name">—</span></div>
+          <div class="kv"><span class="k">关系</span><span class="v" id="pv-c2-relation">—</span></div>
+          <div class="kv"><span class="k">电话</span><span class="v tel" id="pv-c2-phone">—</span></div>
+        </div>
+
+        <div id="qr-wrap" class="qr-wrap" aria-label="二维码（扫码查看本卡片）"></div>
+        <div class="tiny-hint">扫码可在手机上查看本卡片</div>
+      </div>
+
+      <div class="share">
+        <label>
+          分享链接（可复制给家属/社工）
+          <input id="share-link" type="text" readonly />
+        </label>
+        <button id="btn-copy" type="button" class="btn">复制链接</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 查看模式提示（当URL带有#data=时，自动进入只读卡片模式） -->
+  <div id="view-banner" class="view-banner" hidden>
+    当前为“查看模式”。如需编辑，请清除地址栏 #data= 后刷新。
+  </div>
+
+  <footer class="app-footer">
+    <small>开源许可 MIT · 本页面不上传任何数据</small>
+  </footer>
+</body>
+</html>
